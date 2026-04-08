@@ -2,16 +2,19 @@ import ssl
 import socket
 import json
 
+# Client specific SSL context
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
+# Ensures DB must be trusted
 context.verify_mode = ssl.CERT_REQUIRED
-context.check_hostname = False
+context.check_hostname = False # Simplifies local testing and should be "True" in a real system
 
 # Load server certificate
 context.load_cert_chain(certfile="certs/server_cert.pem", keyfile="certs/server_key.pem")
 
+# Trust CA
 context.load_verify_locations(cafile="certs/ca_cert.pem")
-conn = context.wrap_socket(socket.socket(), server_hostname="database")
+conn = context.wrap_socket(socket.socket(), server_hostname="database") # Prepares secure connection
 
 # Debug
 print("Using CA file:", "certs/ca_cert.pem")
