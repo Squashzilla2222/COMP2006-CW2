@@ -1,5 +1,6 @@
 import ssl
 import socket
+import json
 
 # Server specific SSL context
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -22,13 +23,27 @@ while True:
 
         print("\nClient authenticated:")
         print(conn.getpeercert())
-        data = conn.recv(1024)
-        print("Received request:", data.decode())
 
-        # Mock DB response
+        # INPUT received
+        data = conn.recv(1024).decode()
+        print("INPUT (request received from server): ", data)
+        request = json.loads(data)
+
+        # Mock response
+        response_data = {
+            "status": "success", 
+            "password": "SquishyDino_Password"
+        }
+
         response = "Password received"
+        response = json.dumps(response_data)
+
+        # OUTPUT sent
+        print("OUTPUT (response sent to server): ", response)
         conn.send(response.encode())
-        conn.close()
     
     except ssl.SSLError as e:
         print("SSL error:", e)
+
+    finally:
+        conn.close()

@@ -1,5 +1,6 @@
 import ssl 
 import socket
+import json
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
@@ -18,12 +19,17 @@ print("Using CA file:", "certs/ca_cert.pem")
 print("Connecting to database...")
 conn.connect(('localhost', 8443))
 
-# Mock request
-request = "GET password"
-conn.send(request.encode())
-print("Sent:", request)
+# Input sent
+request_data = {
+    "action": "GET", 
+    "username": "SquishyDino"
+}
 
-# Mock response
+request = json.dumps(request_data)
+conn.send(request.encode())
+print("INPUT (request sent to DB): ", request)
+
+# OUTPUT response
 response = conn.recv(1024).decode()
-print("Received:", response)
+print("OUTPUT (response received from DB): ", response)
 conn.close()
